@@ -1,4 +1,6 @@
+using EcommerceNet8.Core.Aplication;
 using EcommerceNet8.Core.Domain;
+using EcommerceNet8.Infraestructure;
 using EcommerceNet8.Infraestructure.Persistence;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -80,15 +82,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
+
+//colocar esto para q funcione infrestructureServices
+builder.Services.AddApplicationServices(builder.Configuration); // Desde ApplicationServiceRegistration
+builder.Services.AddInfrastructureServices(builder.Configuration);
+
+
 var app = builder.Build();
 
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI();
-// }
-
-//app.UseHttpsRedirection();
+ if (app.Environment.IsDevelopment())
+ {
+     app.UseSwagger();
+     app.UseSwaggerUI(); }
+ app.UseHttpsRedirection();
 
 
 using (var scope = app.Services.CreateScope())
