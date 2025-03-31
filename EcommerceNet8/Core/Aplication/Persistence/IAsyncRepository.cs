@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using EcommerceNet8.Core.Aplication.Specifications;
+using System.Linq.Expressions;
 
 namespace EcommerceNet8.Core.Aplication.Persistence
 {
@@ -43,5 +44,11 @@ namespace EcommerceNet8.Core.Aplication.Persistence
         void AddRange(List<T> entities);
 
         void DeleteRange(IReadOnlyList<T> entities);
+
+        Task<T> GetByIdWithSpec(ISpecification<T> spec);
+
+        Task<IReadOnlyList<T>> GetAllWithSpec(ISpecification<T> spec);
+
+        Task<int> CountAsync(ISpecification<T> spec);
     }
 }

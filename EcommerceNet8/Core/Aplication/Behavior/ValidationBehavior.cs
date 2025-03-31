@@ -4,6 +4,7 @@ using MediatR;
 namespace EcommerceNet8.Core.Aplication.Behavior
 {
 
+   // Este es un comportamiento del pipeline de MediatR.Se ejecuta antes del manejador para validar la solicitud (request).
         public class ValidationBehavior<TRequest, TResponse>
 : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
         {

@@ -45,8 +45,8 @@ namespace EcommerceNet8.Infraestructure.Repository
 
             if (!_repositories.ContainsKey(type))
             {
-                var repositoryType = typeof(RepositoryBase<>);
-                var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(TEntity)));
+                var repositoryType = typeof(RepositoryBase<>).MakeGenericType(typeof(TEntity)); // Construimos el tipo cerrado
+                var repositoryInstance = Activator.CreateInstance(repositoryType, _context); // Pasamos _context
                 _repositories.Add(type, repositoryInstance);
             }
 

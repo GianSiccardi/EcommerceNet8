@@ -1,6 +1,9 @@
 using EcommerceNet8.Core.Aplication;
+using EcommerceNet8.Core.Aplication.Contracts.Infrastructure;
+using EcommerceNet8.Core.Aplication.Features.Products.Queries.GetProductList;
 using EcommerceNet8.Core.Domain;
 using EcommerceNet8.Infraestructure;
+using EcommerceNet8.Infraestructure.ImageCloudinary;
 using EcommerceNet8.Infraestructure.Persistence;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,7 +13,9 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography.Xml;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +50,9 @@ builder.Services.AddControllers(opt =>
 {
     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
     opt.Filters.Add(new AuthorizeFilter(policy));
-});
+}).AddJsonOptions(x =>
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles); //Intenta establecer ReferenceHandler.IgnoreClucles para ignorar ciclos de referencia
+                                                                               //(cuando un objeto referencia a otro en un bucle).
 
 builder.Services.AddIdentity<Usuario, IdentityRole>()
     .AddEntityFrameworkStores<EcommerceDbContext>()
@@ -88,13 +95,18 @@ builder.Services.AddApplicationServices(builder.Configuration); // Desde Applica
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
 
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetProductListQueryHandler).Assembly));
+builder.Services.AddScoped<IManageImageService, ManageImageService>();
+
 var app = builder.Build();
 
- if (app.Environment.IsDevelopment())
- {
-     app.UseSwagger();
-     app.UseSwaggerUI(); }
- app.UseHttpsRedirection();
+if (app.Environment.IsDevelopment()) // Solo en desarrollo
+{
+    app.UseSwagger(); // Genera el JSON de Swagger
+    app.UseSwaggerUI(); // Muestra la UI
+}
+app.UseHttpsRedirection();
 
 
 using (var scope = app.Services.CreateScope())

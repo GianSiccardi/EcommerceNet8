@@ -3,6 +3,8 @@ using EcommerceNet8.Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Linq;
+using EcommerceNet8.Core.Aplication.Specifications;
+using EcommerceNet8.Infraestructure.Specifications;
 
 namespace EcommerceNet8.Infraestructure.Repository
 {
@@ -35,6 +37,8 @@ namespace EcommerceNet8.Infraestructure.Repository
             _context.Set<T>().AddRange(entities);
         }
 
+      
+
         public async Task DeleteAsync(T entity)
         {
             _context.Set<T>().Remove(entity);
@@ -55,6 +59,7 @@ namespace EcommerceNet8.Infraestructure.Repository
         {
             return await _context.Set<T>().ToListAsync();
         }
+
 
         public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate)
         {
@@ -103,6 +108,8 @@ namespace EcommerceNet8.Infraestructure.Repository
             return (await _context.Set<T>().FindAsync(id));
         }
 
+    
+
 
         // devuelve primera entidad q coincida con el filtro 
         public async Task<T> GetEntityAsync(Expression<Func<T, bool>>? predicate, List<Expression<Func<T, object>>>? includes = null, bool disableTracking = true)
@@ -129,6 +136,29 @@ namespace EcommerceNet8.Infraestructure.Repository
         {
             _context.Set<T>().Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
+        }
+
+
+        public async Task<int> CountAsync(ISpecification<T> spec)
+        {
+            return await ApplySpecification(spec).CountAsync();
+        }
+
+
+        public async Task<T> GetByIdWithSpec(ISpecification<T> spec)
+        {
+            return (await ApplySpecification(spec).FirstOrDefaultAsync())!;
+        }
+
+
+        public async Task<IReadOnlyList<T>> GetAllWithSpec(ISpecification<T> spec)
+        {
+            return await ApplySpecification(spec).ToListAsync();
+        }
+
+        public IQueryable<T> ApplySpecification(ISpecification<T> spec)
+        {
+            return SpecifitationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), spec);
         }
 
     }

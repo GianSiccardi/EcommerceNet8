@@ -1,8 +1,10 @@
 ﻿using MediatR;
+using Org.BouncyCastle.Utilities;
 
 namespace EcommerceNet8.Core.Aplication.Behavior
 {
-
+    //Este comportamiento captura excepciones que ocurran en el manejador o en pasos posteriores del pipeline.
+    //Te salva de errores inesperados y te da logs para debuggear.
     public class UnhandledExceptionBehavior<TRequest, TResponse>
                                 : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
     {
