@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EcommerceNet8.Core.Domain
 {
-   public class Address : BaseDomainModel
+   public class Adress : BaseDomainModel
     {
         public string? Addres { get; set; }
         public string? City { get; set; }
