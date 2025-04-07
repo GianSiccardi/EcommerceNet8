@@ -8,27 +8,26 @@ namespace EcommerceNet8.Api.Middleware
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-
         private readonly ILogger<ExceptionMiddleware> _logger;
 
-        public ExceptionMiddleware(RequestDelegate next,
-                ILogger<ExceptionMiddleware> logger)
+        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
         {
             _next = next;
             _logger = logger;
-
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
+            _logger.LogInformation($"Solicitud entrante: {context.Request.Method} {context.Request.Path}");
+            _logger.LogInformation($"Headers: {string.Join(", ", context.Request.Headers.Select(h => $"{h.Key}: {h.Value}"))}");
+
             try
             {
                 await _next(context);
             }
-
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                _logger.LogError(ex, "Excepción capturada: {Message}", ex.Message);
                 context.Response.ContentType = "application/json";
                 var statusCode = (int)HttpStatusCode.InternalServerError;
                 var result = string.Empty;
@@ -39,15 +38,10 @@ namespace EcommerceNet8.Api.Middleware
                         statusCode = (int)HttpStatusCode.NotFound;
                         break;
 
-
                     case FluentValidation.ValidationException validationException:
                         statusCode = (int)HttpStatusCode.BadRequest;
-
                         var errors = validationException.Errors.Select(ers => ers.ErrorMessage).ToArray();
-                        var validationJsons = JsonConvert.SerializeObject(errors);
-                        result = JsonConvert.SerializeObject(new CodeErrorException(statusCode, errors, validationJsons)
-
-                    );
+                        result = JsonConvert.SerializeObject(new CodeErrorException(statusCode, errors, JsonConvert.SerializeObject(errors)));
                         break;
 
                     case BadRequestExcpetion badRequestException:
@@ -57,23 +51,19 @@ namespace EcommerceNet8.Api.Middleware
                     default:
                         statusCode = (int)HttpStatusCode.InternalServerError;
                         break;
-
-
-                        if (string.IsNullOrEmpty(result))
-                        {
-                            result = JsonConvert.SerializeObject(
-                                new CodeErrorException(statusCode,
-                                new string[] { ex.Message }, ex.StackTrace));
-                        }
-
-                        context.Response.StatusCode = statusCode;
-                        await context.Response.WriteAsync(result);
-
-
-
                 }
 
+                if (string.IsNullOrEmpty(result))
+                {
+                    result = JsonConvert.SerializeObject(
+                        new CodeErrorException(statusCode, new string[] { ex.Message }, ex.StackTrace));
+                }
+
+                context.Response.StatusCode = statusCode;
+                await context.Response.WriteAsync(result);
             }
+
+            _logger.LogInformation($"Respuesta saliente: {context.Response.StatusCode}");
         }
     }
 }

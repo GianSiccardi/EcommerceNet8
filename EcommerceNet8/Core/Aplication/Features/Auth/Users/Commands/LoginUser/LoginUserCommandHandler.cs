@@ -3,6 +3,7 @@ using EcommerceNet8.Core.Aplication.Contracts.Identity;
 using EcommerceNet8.Core.Aplication.Exceptions;
 using EcommerceNet8.Core.Aplication.Features.Address.Vms;
 using EcommerceNet8.Core.Aplication.Features.Auth.Vms;
+using EcommerceNet8.Core.Aplication.Persistence;
 using EcommerceNet8.Core.Domain;
 using EcommerceNet8.Infraestructure.Repository;
 
@@ -20,16 +21,16 @@ namespace EcommerceNet8.Core.Aplication.Features.Auth.Users.Commands.LoginUser
         private readonly SignInManager<Usuario> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IAuthService _authService;
-        private readonly UnitOfWork unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public LoginUserCommandHandler(IMapper mapper, UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, RoleManager<IdentityRole> roleManager, IAuthService authService, UnitOfWork unitOfWork)
+        public LoginUserCommandHandler(IMapper mapper, UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, RoleManager<IdentityRole> roleManager, IAuthService authService, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _authService = authService;
-            this.unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
      
         
@@ -57,7 +58,7 @@ namespace EcommerceNet8.Core.Aplication.Features.Auth.Users.Commands.LoginUser
 
             var roles = await _userManager.GetRolesAsync(user);
 
-          var address=  await unitOfWork.Repository<Adress>().GetEntityAsync(x => x.Username == user.UserName);
+          var address=  await _unitOfWork.Repository<Adress>().GetEntityAsync(x => x.Username == user.UserName);
 
             var authReponse = new AuthResponse
             {
