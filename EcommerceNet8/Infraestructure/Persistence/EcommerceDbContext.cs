@@ -72,7 +72,7 @@ namespace EcommerceNet8.Infraestructure.Persistence
 
         public DbSet<Product>? Products { get; set; }
         public DbSet<Category>? Categories { get; set; }
-        public DbSet<Image>? Images { get; set; }
+        public DbSet<Imagee>? Images { get; set; }
 
         public DbSet<Adress>? Addresses { get; set; }
 

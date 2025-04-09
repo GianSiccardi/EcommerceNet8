@@ -1,12 +1,18 @@
 ﻿using EcommerceNet8.Core.Aplication.Contracts.Infrastructure;
+using EcommerceNet8.Core.Aplication.Features.Auth.Users.Commands.GetUserById;
+using EcommerceNet8.Core.Aplication.Features.Auth.Users.Commands.GetUserByName;
+using EcommerceNet8.Core.Aplication.Features.Auth.Users.Commands.GetUserByToken;
 using EcommerceNet8.Core.Aplication.Features.Auth.Users.Commands.LoginUser;
+using EcommerceNet8.Core.Aplication.Features.Auth.Users.Commands.PaginationUsers;
 using EcommerceNet8.Core.Aplication.Features.Auth.Users.Commands.RegisterUser;
 using EcommerceNet8.Core.Aplication.Features.Auth.Users.Commands.ResetPassword;
 using EcommerceNet8.Core.Aplication.Features.Auth.Users.Commands.ResetPasswordByToken;
 using EcommerceNet8.Core.Aplication.Features.Auth.Users.Commands.SendPassword;
+using EcommerceNet8.Core.Aplication.Features.Auth.Users.Commands.UpdateAdminStatusUser;
 using EcommerceNet8.Core.Aplication.Features.Auth.Users.Commands.UpdateAdminUser;
 using EcommerceNet8.Core.Aplication.Features.Auth.Users.Commands.UpdateUser;
 using EcommerceNet8.Core.Aplication.Features.Auth.Vms;
+using EcommerceNet8.Core.Aplication.Features.Shared.Queries;
 using EcommerceNet8.Core.Aplication.Models.Authorization;
 using EcommerceNet8.Core.Domain;
 using MediatR;
@@ -119,5 +125,54 @@ namespace EcommerceNet8.Api.Controllers
 
             return await _mediator.Send(request);
         }
+
+
+        [Authorize(Roles = Role.ADMIN)]
+        [HttpPut("updateStatusUser", Name = "UpdateStatusUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<ActionResult<Usuario>> UpdateAdminUserStatus([FromBody] UpdateAdminStatusUserCommand request)
+        { 
+
+            return await _mediator.Send(request);
+        }
+
+        [Authorize(Roles = Role.ADMIN)]
+        [HttpGet("{id}", Name = "GetUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<ActionResult<AuthResponse>> GetUser(string id)
+        {
+            var query = new GetUserByIdCommand(id);
+            return await _mediator.Send(query);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("", Name = "GetUserToken")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<ActionResult<AuthResponse>> GetUserToken()
+        {
+            var query = new GetByTokenCommand();
+            return await _mediator.Send(query);
+        }
+
+
+
+        [Authorize(Roles = Role.ADMIN)]
+        [HttpGet("username/{username}", Name = "GetUserNam")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<ActionResult<AuthResponse>> GetUserName(string username)
+        {
+            var query = new GetUserByUserNameQuery(username);
+            return await _mediator.Send(query);
+        }
+
+        [Authorize(Roles = Role.ADMIN)]
+        [HttpGet("paginationAdmin", Name = "PaginationUser")]
+        [ProducesResponseType(typeof(PaginationVm<Usuario>),  (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<PaginationVm<Usuario>>> PaginationUser([FromQuery] PaginationUserQuery pagination)
+        {
+            var paginationUser = await _mediator.Send(pagination);
+            return Ok(paginationUser);
+        }
+
     }
 }

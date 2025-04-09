@@ -34,7 +34,7 @@ namespace EcommerceNet8.Core.Domain
 
         public virtual ICollection<Review>? reviews { get; set; }
 
-        public virtual ICollection<Image>? images { get; set; }
+        public virtual ICollection<Imagee>? images { get; set; }
 
     }
 

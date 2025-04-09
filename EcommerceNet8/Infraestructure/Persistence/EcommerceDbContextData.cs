@@ -103,7 +103,7 @@ namespace EcommerceNet8.Infraestructure.Persistence
                 if (!context.Images!.Any())
                 {
                     var imageData = File.ReadAllText("Infraestructure/Data/image.json");
-                    var images = JsonConvert.DeserializeObject<List<Image>>(imageData);
+                    var images = JsonConvert.DeserializeObject<List<Imagee>>(imageData);
                     await context.Images!.AddRangeAsync(images!);
                     await context.SaveChangesAsync();
                 }

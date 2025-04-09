@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using EcommerceNet8.Core.Aplication.Features.Categories.VmS;
+using EcommerceNet8.Core.Aplication.Features.Countries.Vms;
 using EcommerceNet8.Core.Aplication.Features.Image.Queries;
 using EcommerceNet8.Core.Aplication.Features.Products.Queries.Vms;
 using EcommerceNet8.Core.Aplication.Features.Reviews.Queries.Vms;
@@ -17,6 +19,8 @@ namespace EcommerceNet8.Core.Aplication.Mapping
 
             CreateMap<Image, ImageVm>();
             CreateMap<Review, ReviewVm>();
+            CreateMap<Country, CountryVm>();
+            CreateMap<Category, CategoryVm>();
 
         }
 

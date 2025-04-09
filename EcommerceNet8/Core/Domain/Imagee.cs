@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EcommerceNet8.Core.Domain
 {
-    public class Image : BaseDomainModel
+    public class Imagee : BaseDomainModel
     {
         // Corregir la declaración de la columna para Url
         [Column(TypeName = "NVARCHAR(4000)")]
