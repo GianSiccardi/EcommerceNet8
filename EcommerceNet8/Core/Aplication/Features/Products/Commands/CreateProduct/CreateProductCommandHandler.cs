@@ -10,11 +10,11 @@ namespace EcommerceNet8.Core.Aplication.Features.Products.Commands.CreateProduct
     public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, ProductVm>
     {
 
-        private readonly UnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
         private readonly IMapper _mapper;
 
-        public CreateProductCommandHandler(UnitOfWork unitOfWork, IMapper mapper)
+        public CreateProductCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -22,7 +22,7 @@ namespace EcommerceNet8.Core.Aplication.Features.Products.Commands.CreateProduct
 
         public async Task<ProductVm> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            var productEntity = _mapper.Map<Product>(request);
+            var productEntity = _mapper.Map<Product>(request.ToDto());
 
             await _unitOfWork.Repository<Product>().AddAsync(productEntity);
 

@@ -172,7 +172,16 @@ app.Use(async (context, next) =>
     await next();
 });
 
+app.Use(async (context, next) =>
+{
+    await next();
 
+    if (context.Response.StatusCode == 404)
+    {
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogWarning($"⚠️ Ruta no encontrada: {context.Request.Method} {context.Request.Path}");
+    }
+});
 
 app.UseHttpsRedirection();
 app.UseAuthentication(); // ¡Primero!

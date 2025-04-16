@@ -4,5 +4,8 @@
     {
         IAsyncRepository<TEntity> Repository<TEntity>() where TEntity : class;
 
+        Task<int> Complete();
+
+
     }
 }

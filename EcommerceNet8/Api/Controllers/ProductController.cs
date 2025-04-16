@@ -1,4 +1,7 @@
-﻿using EcommerceNet8.Core.Aplication.Features.Products.Queries.GetProductById;
+﻿using EcommerceNet8.Core.Aplication.Contracts.Infrastructure;
+using EcommerceNet8.Core.Aplication.Features.Products.Commands.CreateProduct;
+using EcommerceNet8.Core.Aplication.Features.Products.Commands.UpdateProduct;
+using EcommerceNet8.Core.Aplication.Features.Products.Queries.GetProductById;
 using EcommerceNet8.Core.Aplication.Features.Products.Queries.GetProductList;
 using EcommerceNet8.Core.Aplication.Features.Products.Queries.PaginationProdcuts;
 using EcommerceNet8.Core.Aplication.Features.Products.Queries.Vms;
@@ -6,8 +9,11 @@ using EcommerceNet8.Core.Aplication.Features.Shared.Queries;
 using EcommerceNet8.Core.Domain;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Role = EcommerceNet8.Core.Aplication.Models.Authorization.Role;
+
 
 namespace EcommerceNet8.Api.Controllers
 {
@@ -22,9 +28,12 @@ namespace EcommerceNet8.Api.Controllers
 
         private IMediator _mediator;
 
-        public ProductController(IMediator mediator)
+        private readonly IManageImageService _imanageImageService;
+
+        public ProductController(IMediator mediator, IManageImageService imanageImageService)
         {
             _mediator = mediator;
+            _imanageImageService = imanageImageService;
         }
 
         [AllowAnonymous]
@@ -61,7 +70,66 @@ namespace EcommerceNet8.Api.Controllers
             return Ok(product);
         
         }
-       
-        
+
+        [Authorize(Roles =Role.ADMIN) ]
+        [HttpPost("create", Name = "CreateProduct")]
+        [ProducesResponseType(typeof(ProductVm), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<ProductVm>> CreateProduct([FromForm]CreateProductCommand request)
+        {
+
+            var listFotoUrls = new List<CreateProductImageCommand>();
+/*
+            foreach(var foto in request.Photos!)
+            {
+                var resultImage = await _imanageImageService.UploadImage(new Core.Aplication.Models.ImageMangment.ImageData
+                {
+                    ImageStream = foto.OpenReadStream(),
+                    Name = foto.Name
+                });
+
+                var fotoCommand = new CreateProductImageCommand
+                {
+                    PublicCode = resultImage.PublicId,
+                    Url = resultImage.Url
+                };
+
+                request.ImageUrls = listFotoUrls;
+            }*/
+
+            return await _mediator.Send(request);
+
+        }
+
+
+        [Authorize(Roles = Role.ADMIN)]
+        [HttpPut("update", Name = "UpdateProduct")]
+        [ProducesResponseType(typeof(ProductVm), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<ProductVm>> UptdateProduct([FromForm] UpdateProductCommand request)
+        {
+
+            var listFotoUrls = new List<CreateProductImageCommand>();
+            /*
+                        foreach(var foto in request.Photos!)
+                        {
+                            var resultImage = await _imanageImageService.UploadImage(new Core.Aplication.Models.ImageMangment.ImageData
+                            {
+                                ImageStream = foto.OpenReadStream(),
+                                Name = foto.Name
+                            });
+
+                            var fotoCommand = new CreateProductImageCommand
+                            {
+                                PublicCode = resultImage.PublicId,
+                                Url = resultImage.Url
+                            };
+
+                            request.ImageUrls = listFotoUrls;
+                        }*/
+
+            return await _mediator.Send(request);
+
+        }
+
+
     }
 }
