@@ -21,7 +21,8 @@ namespace EcommerceNet8.Core.Aplication.Mapping
                 .ForMember(p => p.NroReviews, x => x.MapFrom(a => a.reviews == null ? 0 : a.reviews.Count));
 
             CreateMap<Imagee, ImageVm>();
-            CreateMap<Review, ReviewVm>();
+            CreateMap<Review, ReviewVm>()
+                .ForMember(r => r.Id, opt => opt.MapFrom(src => src.Id));
             CreateMap<Country, CountryVm>();
             CreateMap<Category, CategoryVm>();
             CreateMap<UpdateProductDto, Product>()
@@ -56,6 +57,8 @@ namespace EcommerceNet8.Core.Aplication.Mapping
     .ForMember(p => p.Category, opt => opt.Ignore());
 
         }
+
+
 
         
 

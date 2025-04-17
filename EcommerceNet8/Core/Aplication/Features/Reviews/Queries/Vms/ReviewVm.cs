@@ -7,9 +7,9 @@
 
         public  string? Name { get; set; }
 
-        public int Raiting { get; set; }
 
-        public string Rating { get; set; }
+        public string? Comment { get; set; }
+        public string? Rating { get; set; }
 
         public int ProductId { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using EcommerceNet8.Core.Aplication.Contracts.Infrastructure;
 using EcommerceNet8.Core.Aplication.Features.Products.Commands.CreateProduct;
+using EcommerceNet8.Core.Aplication.Features.Products.Commands.DeleteProduct;
 using EcommerceNet8.Core.Aplication.Features.Products.Commands.UpdateProduct;
 using EcommerceNet8.Core.Aplication.Features.Products.Queries.GetProductById;
 using EcommerceNet8.Core.Aplication.Features.Products.Queries.GetProductList;
@@ -125,6 +126,18 @@ namespace EcommerceNet8.Api.Controllers
 
                             request.ImageUrls = listFotoUrls;
                         }*/
+
+            return await _mediator.Send(request);
+
+        }
+
+        [Authorize(Roles = Role.ADMIN)]
+        [HttpDelete("updateStatus/{id}", Name = "UpdateStatusProduct")]
+        [ProducesResponseType(typeof(ProductVm), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<ProductVm>> UpdateStatusProduct(int id)
+        {
+
+            var request = new DeleteProductCommand(id);
 
             return await _mediator.Send(request);
 
